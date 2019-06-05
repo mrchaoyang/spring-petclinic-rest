@@ -155,6 +155,7 @@ public class JdbcVetRepositoryImpl implements VetRepository {
 	public void delete(Vet vet) throws DataAccessException {
 		Map<String, Object> params = new HashMap<>();
 		params.put("id", vet.getId());
+        this.namedParameterJdbcTemplate.update("DELETE FROM visits WHERE vet_id=:id", params);
 		this.namedParameterJdbcTemplate.update("DELETE FROM vet_specialties WHERE vet_id=:id", params);
 		this.namedParameterJdbcTemplate.update("DELETE FROM vets WHERE id=:id", params);
 	}

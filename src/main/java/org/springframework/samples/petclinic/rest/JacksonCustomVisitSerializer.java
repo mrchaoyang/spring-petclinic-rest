@@ -20,14 +20,15 @@ import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 
-import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.samples.petclinic.model.Visit;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.Specialty;
+import org.springframework.samples.petclinic.model.Vet;
+import org.springframework.samples.petclinic.model.Visit;
 
 /**
  * @author Vitaliy Fedoriv
@@ -93,7 +94,28 @@ public class JacksonCustomVisitSerializer extends StdSerializer<Visit> {
 		jgen.writeStringField("telephone", owner.getTelephone());
 		jgen.writeEndObject(); // owner
 		jgen.writeEndObject(); // pet
-		jgen.writeEndObject(); // visit
+
+        Vet vet = visit.getVet();   // vet
+        jgen.writeObjectFieldStart("vet");
+        if (vet.getId() == null) {
+            jgen.writeNullField("id");
+        } else {
+            jgen.writeNumberField("id", vet.getId());
+        }
+        jgen.writeStringField("firstName", vet.getFirstName());
+        jgen.writeStringField("lastName", vet.getLastName());
+        // write specialties array
+        jgen.writeArrayFieldStart("specialties");
+        for (Specialty specialty : vet.getSpecialties()) {
+            jgen.writeStartObject(); // specialty
+            jgen.writeNumberField("id", specialty.getId());
+            jgen.writeStringField("name", specialty.getName());
+            jgen.writeEndObject(); // specialty
+        }
+        jgen.writeEndArray(); // specialties
+        jgen.writeEndObject(); // vet
+
+        jgen.writeEndObject(); // visit
 	}
 
 }
