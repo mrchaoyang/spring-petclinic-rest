@@ -190,6 +190,8 @@ public abstract class AbstractClinicServiceTests {
         Visit visit = new Visit();
         pet7.addVisit(visit);
         visit.setDescription("test");
+        Vet vet3 = this.clinicService.findVetById(3);
+        vet3.addVisit(visit);
         this.clinicService.saveVisit(visit);
         this.clinicService.savePet(pet7);
 
