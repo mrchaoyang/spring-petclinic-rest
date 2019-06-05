@@ -16,6 +16,8 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -83,7 +85,23 @@ public class ClinicServiceImpl implements ClinicService {
 		petRepository.delete(pet);
 	}
 
-	@Override
+    @Override
+    public Collection<Pet> findVisitedPets() {
+        Collection<Visit> visits = findAllVisits();
+        TreeSet<Pet> pets = new TreeSet<>(new Comparator<Pet>() {
+            @Override
+            public int compare(Pet o1, Pet o2) {
+                return o1.getId() - o2.getId();
+            }
+        });
+
+        for (Visit visit: visits)
+            pets.add(visit.getPet());
+
+        return pets;
+    }
+
+    @Override
 	@Transactional(readOnly = true)
 	public Visit findVisitById(int visitId) throws DataAccessException {
 		Visit visit = null;
